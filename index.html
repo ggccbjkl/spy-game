@@ -224,17 +224,57 @@ h1{
 </div>
 
 <script>
-let selectedCategories = [];
+console.log("JS работает");
+
+let players = 3;
+let spies = 1;
+
+let roles = [];
+let currentPlayer = 0;
+let opened = false;
+
+let gameTimer = 0;
+let timerInterval = null;
+
+document.querySelectorAll(".player").forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        document
+        .querySelectorAll(".player")
+        .forEach(b=>b.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        players=parseInt(btn.innerText);
+
+    };
+
+});
+
+document.querySelectorAll(".spy").forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        document
+        .querySelectorAll(".spy")
+        .forEach(b=>b.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        spies=parseInt(btn.innerText);
+
+    };
+
+});
 
 document.querySelectorAll(".category").forEach(btn=>{
 
-    btn.onclick = ()=>{
+    btn.onclick=()=>{
 
-        const name = btn.innerText;
+        if(btn.innerText==="Все"){
 
-        if(name === "Все"){
-
-            const active =
+            const active=
             btn.classList.contains("active");
 
             document
@@ -253,7 +293,7 @@ document.querySelectorAll(".category").forEach(btn=>{
 
             btn.classList.toggle("active");
 
-            const allBtn =
+            const allBtn=
             [...document.querySelectorAll(".category")]
             .find(x=>x.innerText==="Все");
 
@@ -271,134 +311,52 @@ document.querySelectorAll(".category").forEach(btn=>{
 
 function updateCategories(){
 
-    selectedCategories=[];
+    let count=0;
 
     document
     .querySelectorAll(".category.active")
     .forEach(btn=>{
 
         if(btn.innerText!=="Все"){
-
-            selectedCategories.push(
-                btn.innerText
-            );
-
+            count++;
         }
 
     });
 
     document
     .getElementById("selectedCount")
-    .innerText =
-    selectedCategories.length;
+    .innerText=count;
 
 }
-let gameTimer = 0;
-let timerInterval;
-
-function startDiscussion(minutes){
-
-    if(minutes === 0){
-        document.getElementById("cardText").innerHTML =
-        "🗳️ Голосование";
-        return;
-    }
-
-    gameTimer = minutes * 60;
-
-    timerInterval = setInterval(()=>{
-
-        let m = Math.floor(gameTimer / 60);
-        let s = gameTimer % 60;
-
-        document.getElementById("cardText").innerHTML =
-        "⏳ " + m + ":" + (s < 10 ? "0"+s : s);
-
-        gameTimer--;
-
-        if(gameTimer < 0){
-
-            clearInterval(timerInterval);
-
-            document.getElementById("cardText").innerHTML =
-            "🗳️ Время вышло<br>Голосование";
-
-        }
-
-    },1000);
-
-
-
-function finishGame(){
-
-    let spiesCount = roles.filter(r=>r.includes("Шпион")).length;
-
-    document.getElementById("playerTitle").innerHTML =
-    "Конец игры";
-
-    document.getElementById("cardText").innerHTML =
-    "🕵️ Шпионов было: " + spiesCount +
-    "<br><br>Нажмите F5 для новой игры";
-
-}
-let players = 3;
-let spies = 1;
-
-let roles = [];
-let currentPlayer = 0;
-let opened = false;
-
-document.querySelectorAll(".player").forEach(btn=>{
-
-    btn.onclick=()=>{
-
-        document.querySelectorAll(".player")
-        .forEach(b=>b.classList.remove("active"));
-
-        btn.classList.add("active");
-
-        players=parseInt(btn.innerText);
-    }
-
-});
-
-document.querySelectorAll(".spy").forEach(btn=>{
-
-    btn.onclick=()=>{
-
-        document.querySelectorAll(".spy")
-        .forEach(b=>b.classList.remove("active"));
-
-        btn.classList.add("active");
-
-        spies=parseInt(btn.innerText);
-    }
-
-});
 
 function startGame(){
 
     roles=[];
 
     for(let i=0;i<players-spies;i++){
-
         roles.push("🏠 Мирный");
-
     }
 
     for(let i=0;i<spies;i++){
-
         roles.push("🕵️ Шпион");
-
     }
 
     roles.sort(()=>Math.random()-0.5);
 
-    document.getElementById("settings")
+    currentPlayer=0;
+    opened=false;
+
+    document
+    .getElementById("settings")
     .classList.add("hidden");
 
-    document.getElementById("game")
+    document
+    .getElementById("game")
     .classList.remove("hidden");
+
+    document
+    .getElementById("playerTitle")
+    .innerHTML="Игрок 1";
 
 }
 
@@ -408,72 +366,154 @@ function showRole(){
 
     opened=true;
 
-    document.getElementById("cardText")
+    document
+    .getElementById("cardText")
     .innerHTML=roles[currentPlayer];
 
-    document.getElementById("nextBtn")
+    document
+    .getElementById("nextBtn")
     .classList.remove("hidden");
 
 }
 
 function nextPlayer(){
-currentPlayer++;
-opened = false;
-if(currentPlayer >= players){
 
-    document.getElementById("playerTitle")
+    currentPlayer++;
+    opened=false;
+
+    if(currentPlayer>=players){
+
+        showDiscussion();
+
+        return;
+
+    }
+
+    document
+    .getElementById("playerTitle")
+    .innerHTML=
+    "Игрок "+(currentPlayer+1);
+
+    document
+    .getElementById("cardText")
+    .innerHTML=
+    "🕵️‍♂️<br>КТО ШПИОН";
+
+    document
+    .getElementById("nextBtn")
+    .classList.add("hidden");
+
+}
+
+function showDiscussion(){
+
+    document
+    .getElementById("playerTitle")
     .innerHTML="Обсуждение";
 
-    document.getElementById("cardText")
+    document
+    .getElementById("cardText")
     .innerHTML=`
-        <button class="main-btn"
-        onclick="startDiscussion(2)">
-        ⏳ 2 минуты
-        </button>
 
-        <button class="main-btn"
-        onclick="startDiscussion(3)">
-        ⏳ 3 минуты
-        </button>
+    <button class="main-btn"
+    onclick="startDiscussion(2)">
+    ⏳ 2 минуты
+    </button>
 
-        <button class="main-btn"
-        onclick="startDiscussion(5)">
-        ⏳ 5 минут
-        </button>
+    <button class="main-btn"
+    onclick="startDiscussion(3)">
+    ⏳ 3 минуты
+    </button>
 
-        <button class="main-btn"
-        onclick="startDiscussion(7)">
-        ⏳ 7 минут
-        </button>
+    <button class="main-btn"
+    onclick="startDiscussion(5)">
+    ⏳ 5 минут
+    </button>
 
-        <button class="main-btn"
-        onclick="startDiscussion(0)">
-        ♾ Без времени
-        </button>
+    <button class="main-btn"
+    onclick="startDiscussion(7)">
+    ⏳ 7 минут
+    </button>
 
-        <button class="main-btn"
-        onclick="finishGame()">
-        🗳️ Завершить игру
-        </button>
+    <button class="main-btn"
+    onclick="startDiscussion(0)">
+    ♾ Без времени
+    </button>
+
+    <button class="main-btn"
+    onclick="finishGame()">
+    🏁 Завершить игру
+    </button>
+
     `;
 
-    document.getElementById("nextBtn")
-    .classList.add("hidden");
-
-    return;
-}
-
-    document.getElementById("playerTitle")
-    .innerHTML="Игрок " + (currentPlayer+1);
-
-    document.getElementById("cardText")
-    .innerHTML="🕵️‍♂️<br>КТО ШПИОН";
-
-    document.getElementById("nextBtn")
+    document
+    .getElementById("nextBtn")
     .classList.add("hidden");
 
 }
 
+function startDiscussion(minutes){
+
+    if(minutes===0){
+
+        document
+        .getElementById("cardText")
+        .innerHTML=
+        "🗳️ Голосование<br><br><button class='main-btn' onclick='finishGame()'>Завершить игру</button>";
+
+        return;
+    }
+
+    clearInterval(timerInterval);
+
+    gameTimer=minutes*60;
+
+    timerInterval=setInterval(()=>{
+
+        let m=Math.floor(gameTimer/60);
+        let s=gameTimer%60;
+
+        document
+        .getElementById("cardText")
+        .innerHTML=
+        "⏳ "+m+":"+(s<10?"0"+s:s);
+
+        gameTimer--;
+
+        if(gameTimer<0){
+
+            clearInterval(timerInterval);
+
+            document
+            .getElementById("cardText")
+            .innerHTML=
+            "🗳️ Время вышло<br><br><button class='main-btn' onclick='finishGame()'>Показать результат</button>";
+
+        }
+
+    },1000);
+
+}
+
+function finishGame(){
+
+    clearInterval(timerInterval);
+
+    document
+    .getElementById("playerTitle")
+    .innerHTML="Конец игры";
+
+    document
+    .getElementById("cardText")
+    .innerHTML=
+    "🎉 Игра завершена";
+
+    document
+    .getElementById("nextBtn")
+    .classList.add("hidden");
+
+}
 </script>
 
 </body>
