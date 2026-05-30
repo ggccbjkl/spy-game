@@ -1,8 +1,8 @@
 <!DOCTYPE html><html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Кто Шпион</title><style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Кто Шпион</title><style>
+
 *{
 margin:0;
 padding:0;
@@ -38,11 +38,18 @@ margin-bottom:15px;
 .section-title{
 color:#9b59ff;
 margin-bottom:10px;
+font-size:18px;
 }
 
 .grid{
 display:grid;
 grid-template-columns:repeat(3,1fr);
+gap:10px;
+}
+
+.spy-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
 gap:10px;
 }
 
@@ -52,7 +59,7 @@ border:none;
 border-radius:15px;
 background:#2a1f45;
 color:white;
-font-size:20px;
+font-size:18px;
 }
 
 .btn.active{
@@ -70,98 +77,168 @@ font-size:20px;
 margin-top:10px;
 }
 
-.hidden{
-display:none;
-}
-
 .role-card{
 background:#1b1230;
 border-radius:20px;
-min-height:260px;
+min-height:250px;
 display:flex;
 justify-content:center;
 align-items:center;
 text-align:center;
-font-size:30px;
+font-size:32px;
 padding:20px;
 user-select:none;
 }
+
+.hidden{
+display:none;
+}
+
 </style></head><body><h1>КТО ШПИОН</h1>
-<p class="subtitle">Один телефон</p><div id="settings"><div class="card">
-<div class="section-title">Игроков</div><div class="grid">
+<p class="subtitle">Один телефон</p><div id="settings"><div class="card"><div class="section-title">👥 Игроков</div><div class="grid">
 <button class="btn player active">3</button>
 <button class="btn player">4</button>
 <button class="btn player">5</button>
 <button class="btn player">6</button>
 <button class="btn player">7</button>
 <button class="btn player">8</button>
-</div>
-</div><div class="card">
-<div class="section-title">Шпионов</div><div class="grid">
+</div></div><div class="card"><div class="section-title">🕵️ Шпионов</div><div class="spy-grid">
 <button class="btn spy active">1</button>
 <button class="btn spy">2</button>
-</div>
-</div><div class="card">
-<div class="section-title">Время обсуждения</div><div class="grid">
-<button class="btn timer active">0</button>
-<button class="btn timer">2</button>
-<button class="btn timer">3</button>
-<button class="btn timer">5</button>
-<button class="btn timer">7</button>
-</div>
-</div><button class="main-btn" onclick="startGame()">
-Начать игру
+</div></div><div class="card"><div class="section-title">⏳ Время обсуждения</div><select id="discussionTime" class="main-btn">
+<option value="0">Без времени</option>
+<option value="2">2 минуты</option>
+<option value="3">3 минуты</option>
+<option value="5" selected>5 минут</option>
+<option value="7">7 минут</option>
+</select></div><div class="card"><div class="section-title">📂 Категории</div><div class="grid"><button class="btn category active">Все</button>
+<button class="btn category active">Disney</button>
+<button class="btn category active">Аниме</button>
+
+<button class="btn category active">MMA</button>
+<button class="btn category active">Футбол</button>
+
+<button class="btn category active">Актёры</button>
+<button class="btn category active">Мультфильмы</button>
+
+<button class="btn category active">Певцы</button>
+<button class="btn category active">Блогеры</button>
+
+</div><p style="margin-top:10px">
+Выбрано:
+<span id="selectedCount">8</span>
+</p></div><button class="main-btn" onclick="startGame()">
+🎲 Начать игру
 </button></div><div id="game" class="hidden"><h1 id="playerTitle">Игрок 1</h1><p class="subtitle">
-Удерживай карточку для просмотра роли
+Удерживай карточку чтобы увидеть роль
 </p><div class="role-card"
-ontouchstart="showRole()"
-ontouchend="hideRole()"
 onmousedown="showRole()"
-onmouseup="hideRole()"><div id="cardText">
-👀<br>УДЕРЖИВАЙ
-</div></div><button id="nextBtn"
-class="main-btn hidden"
+onmouseup="hideRole()"
+ontouchstart="showRole()"
+ontouchend="hideRole()"><div id="cardText">
+👀 Удерживай карточку
+</div></div><button class="main-btn hidden"
+id="nextBtn"
 onclick="nextPlayer()">
-Готово, передать
+✅ Готово, передай другому
 </button>
 
 </div><script>
-
 let players = 3;
 let spies = 1;
-let discussionTime = 0;
 
 let roles = [];
 let currentPlayer = 0;
+let opened = false;
+
+let discussionMinutes = 5;
 
 document.querySelectorAll(".player").forEach(btn=>{
+
 btn.onclick=()=>{
+
 document.querySelectorAll(".player")
 .forEach(b=>b.classList.remove("active"));
+
 btn.classList.add("active");
+
 players=parseInt(btn.innerText);
+
 };
+
 });
 
 document.querySelectorAll(".spy").forEach(btn=>{
+
 btn.onclick=()=>{
+
 document.querySelectorAll(".spy")
 .forEach(b=>b.classList.remove("active"));
+
 btn.classList.add("active");
+
 spies=parseInt(btn.innerText);
+
 };
+
 });
 
-document.querySelectorAll(".timer").forEach(btn=>{
+document.querySelectorAll(".category").forEach(btn=>{
+
 btn.onclick=()=>{
-document.querySelectorAll(".timer")
-.forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-discussionTime=parseInt(btn.innerText);
-};
+
+if(btn.innerText==="Все"){
+
+let active=
+btn.classList.contains("active");
+
+document.querySelectorAll(".category")
+.forEach(c=>{
+
+if(active){
+c.classList.remove("active");
+}else{
+c.classList.add("active");
+}
+
 });
+
+}else{
+
+btn.classList.toggle("active");
+
+}
+
+updateCategories();
+
+};
+
+});
+
+function updateCategories(){
+
+let count=0;
+
+document.querySelectorAll(".category.active")
+.forEach(btn=>{
+
+if(btn.innerText!=="Все"){
+count++;
+}
+
+});
+
+document.getElementById("selectedCount")
+.innerText=count;
+
+}
 
 function startGame(){
+
+discussionMinutes =
+parseInt(
+document.getElementById("discussionTime").value
+);
 
 roles=[];
 
@@ -176,103 +253,151 @@ roles.push("🕵️ Шпион");
 roles.sort(()=>Math.random()-0.5);
 
 currentPlayer=0;
+opened=false;
 
 document.getElementById("settings")
 .classList.add("hidden");
 
 document.getElementById("game")
 .classList.remove("hidden");
+
+document.getElementById("playerTitle")
+.innerHTML="Игрок 1";
+
+document.getElementById("cardText")
+.innerHTML="👀 Удерживай карточку";
+
 }
+let timerInterval = null;
+let gameTimer = 0;
 
 function showRole(){
 
 document.getElementById("cardText")
-.innerHTML=roles[currentPlayer];
+.innerHTML = roles[currentPlayer];
 
 document.getElementById("nextBtn")
 .classList.remove("hidden");
+
+opened = true;
 
 }
 
 function hideRole(){
 
+if(!opened) return;
+
 document.getElementById("cardText")
-.innerHTML="👀<br>УДЕРЖИВАЙ";
+.innerHTML = "👀 Удерживай карточку";
 
 }
 
 function nextPlayer(){
 
 currentPlayer++;
+opened = false;
 
-if(currentPlayer>=players){
+if(currentPlayer >= players){
 
-startVoting();
+showDiscussion();
 
 return;
+
 }
 
 document.getElementById("playerTitle")
-.innerHTML="Игрок "+(currentPlayer+1);
+.innerHTML =
+"Игрок " + (currentPlayer + 1);
 
 document.getElementById("cardText")
-.innerHTML="👀<br>УДЕРЖИВАЙ";
+.innerHTML =
+"👀 Удерживай карточку";
 
 document.getElementById("nextBtn")
 .classList.add("hidden");
+
+}
+
+function showDiscussion(){
+
+document.getElementById("playerTitle")
+.innerHTML = "Обсуждение";
+
+document.getElementById("nextBtn")
+.classList.add("hidden");
+
+if(discussionMinutes === 0){
+
+startVoting();
+return;
+
+}
+
+gameTimer = discussionMinutes * 60;
+
+document.getElementById("cardText")
+.innerHTML = "⏳ " + discussionMinutes + ":00";
+
+timerInterval = setInterval(()=>{
+
+let m = Math.floor(gameTimer / 60);
+let s = gameTimer % 60;
+
+document.getElementById("cardText")
+.innerHTML =
+"⏳ " + m + ":" + (s < 10 ? "0"+s : s);
+
+gameTimer--;
+
+if(gameTimer < 0){
+
+clearInterval(timerInterval);
+
+startVoting();
+
+}
+
+},1000);
 
 }
 
 function startVoting(){
 
-let html="<h3>🗳 Голосование</h3>";
+let html = "<h3>🗳 Голосование</h3>";
 
 for(let i=1;i<=players;i++){
 
-html+=`
-<button class="main-btn"
-onclick="votePlayer(${i})">
-Игрок ${i}
-</button>
-`;
+html += "<button class="main-btn" onclick="votePlayer(${i})"> Игрок ${i} </button>";
 
 }
 
-document.getElementById("playerTitle")
-.innerHTML="Голосование";
-
 document.getElementById("cardText")
-.innerHTML=html;
-
-document.getElementById("nextBtn")
-.classList.add("hidden");
+.innerHTML = html;
 
 }
 
 function votePlayer(player){
 
-let spiesList=[];
+let spiesList = [];
 
 roles.forEach((role,index)=>{
 
 if(role.includes("Шпион")){
-spiesList.push("Игрок "+(index+1));
+
+spiesList.push(index + 1);
+
 }
 
 });
 
 document.getElementById("playerTitle")
-.innerHTML="Результат";
+.innerHTML = "Результат";
 
 document.getElementById("cardText")
-.innerHTML=
-"Вы выбрали игрока "+player+
-"<br><br>Шпионы:<br>"+
-spiesList.join("<br>")+
-"<br><br><button class='main-btn' onclick='location.reload()'>Новая игра</button>";
+.innerHTML = "Выбран игрок ${player} <br><br> 🕵️ Шпионы: ${spiesList.join(", ")} <br><br> <button class="main-btn" onclick="location.reload()"> 🔄 Новая игра </button>";
 
 }
-
 </script>
+
 </body>
-</html>
+</html>  
