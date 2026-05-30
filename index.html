@@ -304,43 +304,7 @@ function startDiscussion(minutes){
         return;
     }
 
-    gameTimer = minutes * 60;
 
-    timerInterval = setInterval(()=>{
-
-        let m = Math.floor(gameTimer / 60);
-        let s = gameTimer % 60;
-
-        document.getElementById("cardText").innerHTML =
-        "⏳ " + m + ":" + (s < 10 ? "0"+s : s);
-
-        gameTimer--;
-
-        if(gameTimer < 0){
-
-            clearInterval(timerInterval);
-
-            document.getElementById("cardText").innerHTML =
-            "🗳️ Время вышло<br>Голосование";
-
-        }
-
-    },1000);
-
-}
-
-function finishGame(){
-
-    let spiesCount = roles.filter(r=>r.includes("Шпион")).length;
-
-    document.getElementById("playerTitle").innerHTML =
-    "Конец игры";
-
-    document.getElementById("cardText").innerHTML =
-    "🕵️ Шпионов было: " + spiesCount +
-    "<br><br>Нажмите F5 для новой игры";
-
-}
     }
 
     gameTimer = minutes * 60;
@@ -456,7 +420,8 @@ function showRole(){
 }
 
 function nextPlayer(){
-
+currentPlayer++;
+opened = false;
 if(currentPlayer >= players){
 
     document.getElementById("playerTitle")
