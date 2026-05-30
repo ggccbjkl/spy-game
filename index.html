@@ -160,6 +160,37 @@ h1{
 <button class="main-btn" onclick="startGame()">
 🎲 Начать игру
 </button>
+<div class="card">
+
+<div class="section-title">
+📂 КАТЕГОРИИ
+</div>
+
+<div class="grid">
+
+<button class="btn category active">Все</button>
+
+<button class="btn category active">Disney</button>
+<button class="btn category active">Аниме</button>
+
+<button class="btn category active">MMA</button>
+<button class="btn category active">Футбол</button>
+
+<button class="btn category active">Актёры</button>
+<button class="btn category active">Мультфильмы</button>
+
+<button class="btn category active">Певцы</button>
+<button class="btn category active">Блогеры</button>
+
+</div>
+
+<p style="margin-top:15px;color:#aaa;">
+Выбрано:
+<span id="selectedCount">8</span>
+</p>
+
+</div>
+
 
 </div>
 
@@ -193,7 +224,162 @@ h1{
 </div>
 
 <script>
+let selectedCategories = [];
 
+document.querySelectorAll(".category").forEach(btn=>{
+
+    btn.onclick = ()=>{
+
+        const name = btn.innerText;
+
+        if(name === "Все"){
+
+            const active =
+            btn.classList.contains("active");
+
+            document
+            .querySelectorAll(".category")
+            .forEach(c=>{
+
+                if(active){
+                    c.classList.remove("active");
+                }else{
+                    c.classList.add("active");
+                }
+
+            });
+
+        }else{
+
+            btn.classList.toggle("active");
+
+            const allBtn =
+            [...document.querySelectorAll(".category")]
+            .find(x=>x.innerText==="Все");
+
+            if(allBtn){
+                allBtn.classList.remove("active");
+            }
+
+        }
+
+        updateCategories();
+
+    };
+
+});
+
+function updateCategories(){
+
+    selectedCategories=[];
+
+    document
+    .querySelectorAll(".category.active")
+    .forEach(btn=>{
+
+        if(btn.innerText!=="Все"){
+
+            selectedCategories.push(
+                btn.innerText
+            );
+
+        }
+
+    });
+
+    document
+    .getElementById("selectedCount")
+    .innerText =
+    selectedCategories.length;
+
+}
+let gameTimer = 0;
+let timerInterval;
+
+function startDiscussion(minutes){
+
+    if(minutes === 0){
+        document.getElementById("cardText").innerHTML =
+        "🗳️ Голосование";
+        return;
+    }
+
+    gameTimer = minutes * 60;
+
+    timerInterval = setInterval(()=>{
+
+        let m = Math.floor(gameTimer / 60);
+        let s = gameTimer % 60;
+
+        document.getElementById("cardText").innerHTML =
+        "⏳ " + m + ":" + (s < 10 ? "0"+s : s);
+
+        gameTimer--;
+
+        if(gameTimer < 0){
+
+            clearInterval(timerInterval);
+
+            document.getElementById("cardText").innerHTML =
+            "🗳️ Время вышло<br>Голосование";
+
+        }
+
+    },1000);
+
+}
+
+function finishGame(){
+
+    let spiesCount = roles.filter(r=>r.includes("Шпион")).length;
+
+    document.getElementById("playerTitle").innerHTML =
+    "Конец игры";
+
+    document.getElementById("cardText").innerHTML =
+    "🕵️ Шпионов было: " + spiesCount +
+    "<br><br>Нажмите F5 для новой игры";
+
+}
+    }
+
+    gameTimer = minutes * 60;
+
+    timerInterval = setInterval(()=>{
+
+        let m = Math.floor(gameTimer / 60);
+        let s = gameTimer % 60;
+
+        document.getElementById("cardText").innerHTML =
+        "⏳ " + m + ":" + (s < 10 ? "0"+s : s);
+
+        gameTimer--;
+
+        if(gameTimer < 0){
+
+            clearInterval(timerInterval);
+
+            document.getElementById("cardText").innerHTML =
+            "🗳️ Время вышло<br>Голосование";
+
+        }
+
+    },1000);
+
+}
+
+function finishGame(){
+
+    let spiesCount = roles.filter(r=>r.includes("Шпион")).length;
+
+    document.getElementById("playerTitle").innerHTML =
+    "Конец игры";
+
+    document.getElementById("cardText").innerHTML =
+    "🕵️ Шпионов было: " + spiesCount +
+    "<br><br>Нажмите F5 для новой игры";
+
+}
 let players = 3;
 let spies = 1;
 
@@ -271,23 +457,49 @@ function showRole(){
 
 function nextPlayer(){
 
-    currentPlayer++;
+if(currentPlayer >= players){
 
-    opened=false;
+    document.getElementById("playerTitle")
+    .innerHTML="Обсуждение";
 
-    if(currentPlayer >= players){
+    document.getElementById("cardText")
+    .innerHTML=`
+        <button class="main-btn"
+        onclick="startDiscussion(2)">
+        ⏳ 2 минуты
+        </button>
 
-        document.getElementById("playerTitle")
-        .innerHTML="Игра началась";
+        <button class="main-btn"
+        onclick="startDiscussion(3)">
+        ⏳ 3 минуты
+        </button>
 
-        document.getElementById("cardText")
-        .innerHTML="🎉";
+        <button class="main-btn"
+        onclick="startDiscussion(5)">
+        ⏳ 5 минут
+        </button>
 
-        document.getElementById("nextBtn")
-        .classList.add("hidden");
+        <button class="main-btn"
+        onclick="startDiscussion(7)">
+        ⏳ 7 минут
+        </button>
 
-        return;
-    }
+        <button class="main-btn"
+        onclick="startDiscussion(0)">
+        ♾ Без времени
+        </button>
+
+        <button class="main-btn"
+        onclick="finishGame()">
+        🗳️ Завершить игру
+        </button>
+    `;
+
+    document.getElementById("nextBtn")
+    .classList.add("hidden");
+
+    return;
+}
 
     document.getElementById("playerTitle")
     .innerHTML="Игрок " + (currentPlayer+1);
