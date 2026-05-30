@@ -1,297 +1,278 @@
 <!DOCTYPE html><html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Кто Шпион</title><style>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кто Шпион</title><style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
 body{
-    background:#120022;
-    color:white;
-    padding:20px;
+background:#120022;
+color:white;
+padding:20px;
 }
 
 h1{
-    text-align:center;
-    color:#9b59ff;
-    margin-bottom:10px;
+text-align:center;
+color:#9b59ff;
+margin-bottom:10px;
 }
 
 .subtitle{
-    text-align:center;
-    color:#aaa;
-    margin-bottom:20px;
+text-align:center;
+color:#aaa;
+margin-bottom:20px;
 }
 
 .card{
-    background:#1b1230;
-    border-radius:20px;
-    padding:15px;
-    margin-bottom:15px;
+background:#1b1230;
+border-radius:20px;
+padding:15px;
+margin-bottom:15px;
 }
 
 .section-title{
-    margin-bottom:10px;
-    color:#9b59ff;
+color:#9b59ff;
+margin-bottom:10px;
 }
 
 .grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
-
-.spy-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
 }
 
 .btn{
-    height:60px;
-    border:none;
-    border-radius:15px;
-    background:#2a1f45;
-    color:white;
-    font-size:20px;
+height:60px;
+border:none;
+border-radius:15px;
+background:#2a1f45;
+color:white;
+font-size:20px;
 }
 
 .btn.active{
-    background:#8f52ff;
+background:#8f52ff;
 }
 
 .main-btn{
-    width:100%;
-    height:60px;
-    border:none;
-    border-radius:15px;
-    background:#8f52ff;
-    color:white;
-    font-size:22px;
-    margin-top:15px;
+width:100%;
+height:60px;
+border:none;
+border-radius:15px;
+background:#8f52ff;
+color:white;
+font-size:20px;
+margin-top:10px;
 }
 
 .hidden{
-    display:none;
+display:none;
 }
 
 .role-card{
-    background:#1b1230;
-    border-radius:20px;
-    min-height:250px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    font-size:36px;
-    padding:20px;
+background:#1b1230;
+border-radius:20px;
+min-height:260px;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+font-size:30px;
+padding:20px;
+user-select:none;
 }
-
 </style></head><body><h1>КТО ШПИОН</h1>
-<p class="subtitle">Один телефон</p><div id="settings"><div class="card"><div class="section-title">👥 Игроков</div><div class="grid">
+<p class="subtitle">Один телефон</p><div id="settings"><div class="card">
+<div class="section-title">Игроков</div><div class="grid">
 <button class="btn player active">3</button>
 <button class="btn player">4</button>
 <button class="btn player">5</button>
 <button class="btn player">6</button>
 <button class="btn player">7</button>
 <button class="btn player">8</button>
-</div></div><div class="card"><div class="section-title">🕵️ Шпионов</div><div class="spy-grid">
+</div>
+</div><div class="card">
+<div class="section-title">Шпионов</div><div class="grid">
 <button class="btn spy active">1</button>
 <button class="btn spy">2</button>
-</div></div><div class="card"><div class="section-title">📂 Категории</div><div class="grid"><button class="btn category active">Все</button>
-<button class="btn category active">Disney</button>
-<button class="btn category active">Аниме</button>
-
-<button class="btn category active">MMA</button>
-<button class="btn category active">Футбол</button>
-
-<button class="btn category active">Актёры</button>
-<button class="btn category active">Мультфильмы</button>
-
-<button class="btn category active">Певцы</button>
-<button class="btn category active">Блогеры</button>
-
-</div><p style="margin-top:10px">
-Выбрано:
-<span id="selectedCount">8</span>
-</p></div><button class="main-btn" onclick="startGame()">
-🎲 Начать игру
+</div>
+</div><div class="card">
+<div class="section-title">Время обсуждения</div><div class="grid">
+<button class="btn timer active">0</button>
+<button class="btn timer">2</button>
+<button class="btn timer">3</button>
+<button class="btn timer">5</button>
+<button class="btn timer">7</button>
+</div>
+</div><button class="main-btn" onclick="startGame()">
+Начать игру
 </button></div><div id="game" class="hidden"><h1 id="playerTitle">Игрок 1</h1><p class="subtitle">
-Нажми на карточку
-</p><div class="role-card" onclick="showRole()"><div id="cardText">
-🕵️‍♂️<br>КТО ШПИОН
-</div></div><button class="main-btn hidden"
-id="nextBtn"
+Удерживай карточку для просмотра роли
+</p><div class="role-card"
+ontouchstart="showRole()"
+ontouchend="hideRole()"
+onmousedown="showRole()"
+onmouseup="hideRole()"><div id="cardText">
+👀<br>УДЕРЖИВАЙ
+</div></div><button id="nextBtn"
+class="main-btn hidden"
 onclick="nextPlayer()">
-Передать дальше
+Готово, передать
 </button>
 
 </div><script>
+
 let players = 3;
 let spies = 1;
+let discussionTime = 0;
 
 let roles = [];
 let currentPlayer = 0;
-let opened = false;
 
 document.querySelectorAll(".player").forEach(btn=>{
-
-    btn.onclick=()=>{
-
-        document.querySelectorAll(".player")
-        .forEach(b=>b.classList.remove("active"));
-
-        btn.classList.add("active");
-
-        players=parseInt(btn.innerText);
-
-    };
-
+btn.onclick=()=>{
+document.querySelectorAll(".player")
+.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+players=parseInt(btn.innerText);
+};
 });
 
 document.querySelectorAll(".spy").forEach(btn=>{
-
-    btn.onclick=()=>{
-
-        document.querySelectorAll(".spy")
-        .forEach(b=>b.classList.remove("active"));
-
-        btn.classList.add("active");
-
-        spies=parseInt(btn.innerText);
-
-    };
-
+btn.onclick=()=>{
+document.querySelectorAll(".spy")
+.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+spies=parseInt(btn.innerText);
+};
 });
 
-document.querySelectorAll(".category").forEach(btn=>{
-
-    btn.onclick=()=>{
-
-        if(btn.innerText==="Все"){
-
-            const active =
-            btn.classList.contains("active");
-
-            document.querySelectorAll(".category")
-            .forEach(c=>{
-
-                if(active){
-                    c.classList.remove("active");
-                }else{
-                    c.classList.add("active");
-                }
-
-            });
-
-        }else{
-
-            btn.classList.toggle("active");
-
-        }
-
-        updateCategories();
-
-    };
-
+document.querySelectorAll(".timer").forEach(btn=>{
+btn.onclick=()=>{
+document.querySelectorAll(".timer")
+.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+discussionTime=parseInt(btn.innerText);
+};
 });
-
-function updateCategories(){
-
-    let count = 0;
-
-    document.querySelectorAll(".category.active")
-    .forEach(btn=>{
-
-        if(btn.innerText!=="Все"){
-            count++;
-        }
-
-    });
-
-    document.getElementById("selectedCount")
-    .innerText = count;
-
-}
 
 function startGame(){
 
-    roles = [];
+roles=[];
 
-    for(let i=0;i<players-spies;i++){
-        roles.push("🏠 Мирный");
-    }
+for(let i=0;i<players-spies;i++){
+roles.push("🏠 Мирный");
+}
 
-    for(let i=0;i<spies;i++){
-        roles.push("🕵️ Шпион");
-    }
+for(let i=0;i<spies;i++){
+roles.push("🕵️ Шпион");
+}
 
-    roles.sort(()=>Math.random()-0.5);
+roles.sort(()=>Math.random()-0.5);
 
-    currentPlayer = 0;
-    opened = false;
+currentPlayer=0;
 
-    document.getElementById("settings")
-    .classList.add("hidden");
+document.getElementById("settings")
+.classList.add("hidden");
 
-    document.getElementById("game")
-    .classList.remove("hidden");
-
-    document.getElementById("playerTitle")
-    .innerHTML = "Игрок 1";
-
+document.getElementById("game")
+.classList.remove("hidden");
 }
 
 function showRole(){
 
-    if(opened) return;
+document.getElementById("cardText")
+.innerHTML=roles[currentPlayer];
 
-    opened = true;
+document.getElementById("nextBtn")
+.classList.remove("hidden");
 
-    document.getElementById("cardText")
-    .innerHTML = roles[currentPlayer];
+}
 
-    document.getElementById("nextBtn")
-    .classList.remove("hidden");
+function hideRole(){
+
+document.getElementById("cardText")
+.innerHTML="👀<br>УДЕРЖИВАЙ";
 
 }
 
 function nextPlayer(){
 
-    currentPlayer++;
-    opened = false;
+currentPlayer++;
 
-    if(currentPlayer >= players){
+if(currentPlayer>=players){
 
-        document.getElementById("playerTitle")
-        .innerHTML = "Игра началась";
+startVoting();
 
-        document.getElementById("cardText")
-        .innerHTML = "🎉 Обсуждение игроков";
+return;
+}
 
-        document.getElementById("nextBtn")
-        .classList.add("hidden");
+document.getElementById("playerTitle")
+.innerHTML="Игрок "+(currentPlayer+1);
 
-        return;
-    }
+document.getElementById("cardText")
+.innerHTML="👀<br>УДЕРЖИВАЙ";
 
-    document.getElementById("playerTitle")
-    .innerHTML = "Игрок " + (currentPlayer+1);
+document.getElementById("nextBtn")
+.classList.add("hidden");
 
-    document.getElementById("cardText")
-    .innerHTML = "🕵️‍♂️<br>КТО ШПИОН";
+}
 
-    document.getElementById("nextBtn")
-    .classList.add("hidden");
+function startVoting(){
+
+let html="<h3>🗳 Голосование</h3>";
+
+for(let i=1;i<=players;i++){
+
+html+=`
+<button class="main-btn"
+onclick="votePlayer(${i})">
+Игрок ${i}
+</button>
+`;
+
+}
+
+document.getElementById("playerTitle")
+.innerHTML="Голосование";
+
+document.getElementById("cardText")
+.innerHTML=html;
+
+document.getElementById("nextBtn")
+.classList.add("hidden");
+
+}
+
+function votePlayer(player){
+
+let spiesList=[];
+
+roles.forEach((role,index)=>{
+
+if(role.includes("Шпион")){
+spiesList.push("Игрок "+(index+1));
+}
+
+});
+
+document.getElementById("playerTitle")
+.innerHTML="Результат";
+
+document.getElementById("cardText")
+.innerHTML=
+"Вы выбрали игрока "+player+
+"<br><br>Шпионы:<br>"+
+spiesList.join("<br>")+
+"<br><br><button class='main-btn' onclick='location.reload()'>Новая игра</button>";
 
 }
 
 </script>
-
 </body>
 </html>
