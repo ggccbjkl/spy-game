@@ -327,33 +327,7 @@ function startDiscussion(minutes){
 
     },1000);
 
-}
 
-
-
-
-    timerInterval = setInterval(()=>{
-
-        let m = Math.floor(gameTimer / 60);
-        let s = gameTimer % 60;
-
-        document.getElementById("cardText").innerHTML =
-        "⏳ " + m + ":" + (s < 10 ? "0"+s : s);
-
-        gameTimer--;
-
-        if(gameTimer < 0){
-
-            clearInterval(timerInterval);
-
-            document.getElementById("cardText").innerHTML =
-            "🗳️ Время вышло<br>Голосование";
-
-        }
-
-    },1000);
-
-}
 
 function finishGame(){
 
